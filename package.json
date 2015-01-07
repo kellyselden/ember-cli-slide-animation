@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-slide-animation",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Route transition slide animation",
   "directories": {
     "doc": "doc",

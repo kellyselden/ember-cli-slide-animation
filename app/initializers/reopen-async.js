@@ -1,7 +1,6 @@
 import Ember from 'ember';
 
-export function initialize(/* container, application */) {
-  // application.inject('route', 'foo', 'service:foo');
+export function initialize() {
   Ember.ContainerView.reopen({ animationSequence: 'async' });
 }
 
