@@ -1,0 +1,15 @@
+body {
+  overflow-x: hidden;
+}
+
+.slideIn, .slideOut {
+  transition: all .25s linear;
+}
+.slideIn {
+  transform: translateX(0);
+}
+.slideOut {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+}

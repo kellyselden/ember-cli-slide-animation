@@ -6,5 +6,6 @@ module.exports = {
 
   included: function(app) {
     app.import(app.bowerDirectory + '/ember-animate/ember-animate.js');
+    app.import('vendor/app.css');
   }
 };
