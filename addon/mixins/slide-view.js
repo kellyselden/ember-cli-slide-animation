@@ -4,53 +4,69 @@ function getCount(path) {
   return path.split('/').filter(function(s) { return s.length; }).length;
 }
 
-var isReversed;
+function setAnimateOutContext(animateOutContext) {
+  this.container.lookup('application:main').set('animateOutContext', animateOutContext);
+}
+function getAnimateOutContext() {
+  return this.container.lookup('application:main').get('animateOutContext');
+}
 
+function updatePreviousPath() {
+  this.container.lookup('application:main').set('previousPath', window.location.pathname);
+}
+function getPreviousPath() {
+  return this.container.lookup('application:main').get('previousPath');
+}
+
+var isReversed, isSame;
 function updateIsReversed() {
-  var previousPath = this.container.lookup('application:main').get('previousPath');
+  var previousPath = getPreviousPath.call(this);
   var currentPath = window.location.pathname;
   isReversed = previousPath && getCount(previousPath) > getCount(currentPath);
+  isSame = previousPath && getCount(previousPath) === getCount(currentPath);
 }
 
 export default Ember.Mixin.create({
   willAnimateOut: function() {
-    console.log('willAnimateOut: ' + window.history.state.path);
-    updateIsReversed.call(this);
   },
   animateOut: function(done) {
-    console.log('animateOut: ' + window.history.state.path);
+    setAnimateOutContext.call(this, {
+      view: this,
+      done: done
+    });
+  },
+  willAnimateIn: function() {
+    var animateOutContext = getAnimateOutContext.call(this);
+    if (!animateOutContext) return;
+    updateIsReversed.call(this);
+    if (isSame) {
+      animateOutContext.done();
+      return;
+    }
+
     var el = this.$();
+    var translate = Ember.$(window).width() - el.offset().left;
+    el.css('transform', 'translateX(' + (translate * (isReversed ? -1 : 1)) + 'px)');
+
+    el = animateOutContext.view.$();
     var container = el.closest('.container');
     el.one('transitionend', function() {
       container.removeAttr('style');
       el.removeClass('slideOut');
       el.removeAttr('style');
-      done();
+      animateOutContext.done();
     });
     container.css('position', 'relative');
     el.addClass('slideOut');
-    var translate = el.offset().left + el.outerWidth();
-    el.css('transform', 'translateX(' + translate + 'px)');
-    this.container.lookup('application:main').set('animateOutContext', {
-      view: this,
-      translate: translate
-    });
-  },
-  willAnimateIn: function() {
-    console.log('willAnimateIn: ' + window.history.state.path);
-    updateIsReversed.call(this);
-    var el = this.$();
-    var translate = Ember.$(window).width() - el.offset().left;
-    el.css('transform', 'translateX(' + (translate * (isReversed ? -1 : 1)) + 'px)');
-    var animateOutContext = this.container.lookup('application:main').get('animateOutContext');
-    if (animateOutContext) {
-      el = animateOutContext.view.$();
-      translate = animateOutContext.translate;
-      el.css('transform', 'translateX(' + (translate * (isReversed ? 1 : -1)) + 'px)');
-    }
+    translate = el.offset().left + el.outerWidth();
+    el.css('transform', 'translateX(' + (translate * (isReversed ? 1 : -1)) + 'px)');
   },
   animateIn: function(done) {
-    console.log('animateIn: ' + window.history.state.path);
+    if (!getAnimateOutContext.call(this) || isSame) {
+      done();
+      return;
+    }
+
     var el = this.$();
     el.removeAttr('style');
     el.one('transitionend', function() {
@@ -60,11 +76,9 @@ export default Ember.Mixin.create({
     el.addClass('slideIn');
   },
   didAnimateOut: function() {
-    console.log('didAnimateOut: ' + window.history.state.path);
-    this.container.lookup('application:main').set('animateOutContext', undefined);
+    setAnimateOutContext.call(this, undefined);
   },
   didAnimateIn: function() {
-    console.log('didAnimateIn: ' + window.history.state.path);
-    this.container.lookup('application:main').set('previousPath', window.location.pathname);
+    updatePreviousPath.call(this);
   }
 });
