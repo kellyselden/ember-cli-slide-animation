@@ -1,25 +1,14 @@
-# Ember-cli-slide-animation
+#ember-cli-slide-animation
 
-This README outlines the details of collaborating on this Ember addon.
+Route transition slide animation. Aiming to imitate the slide left and slide right transitions of iOS and mobile in general. This uses the [ember-animate](https://github.com/gigafied/ember-animate) library.
 
-## Installation
+##Usage
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+`npm install --save-dev ember-cli-slide-animation`
+```javascript
+import SlideViewMixin from 'ember-cli-slide-animation/mixins/slide-view';
 
-## Running
+export default Ember.View.extend(SlideViewMixin);
+```
 
-* `ember server`
-* Visit your app at http://localhost:4200.
-
-## Running Tests
-
-* `ember test`
-* `ember test --server`
-
-## Building
-
-* `ember build`
-
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+Though views are not very common in Ember.js, to get the slide animation on your transitions, you must create a view for every route you want animated. Then include the mixin and you're all set. Your route heirarchy will determine the slide direction.
