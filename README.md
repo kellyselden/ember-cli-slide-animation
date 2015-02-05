@@ -2,6 +2,10 @@
 
 Route transition slide animation. Aiming to imitate the slide left and slide right transitions of iOS and mobile in general. This uses the [ember-animate](https://github.com/gigafied/ember-animate) library.
 
+##Live Demo
+
+[Live demo](http://ember-cli-slide-animation.herokuapp.com/) with [source code](https://github.com/kellyselden/ember-cli-slide-animation-demo)
+
 ##Usage
 
 `npm install --save-dev ember-cli-slide-animation`
