@@ -8,7 +8,7 @@ Route transition slide animation. Aiming to imitate the slide left and slide rig
 
 ##Usage
 
-`npm install --save-dev ember-cli-slide-animation`
+`ember install:addon ember-cli-slide-animation`
 ```javascript
 import SlideViewMixin from 'ember-cli-slide-animation/mixins/slide-view';
 
