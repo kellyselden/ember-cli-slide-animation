@@ -4,26 +4,29 @@ function getCount(path) {
   return path.split('/').filter(function(s) { return s.length; }).length;
 }
 
+function getApp() {
+  return this.container.lookup('application:main');
+}
+
 function setAnimateOutContext(animateOutContext) {
-  this.container.lookup('application:main').set('animateOutContext', animateOutContext);
+  getApp.call(this).set('animateOutContext', animateOutContext);
 }
 function getAnimateOutContext() {
-  return this.container.lookup('application:main').get('animateOutContext');
+  return getApp.call(this).get('animateOutContext');
 }
 
 function updatePreviousPath() {
-  this.container.lookup('application:main').set('previousPath', window.location.pathname);
+  getApp.call(this).set('previousPath', window.location.pathname);
 }
 function getPreviousPath() {
-  return this.container.lookup('application:main').get('previousPath');
+  return getApp.call(this).get('previousPath');
 }
 
-var isReversed, isSame;
+var isReversed;
 function updateIsReversed() {
   var previousPath = getPreviousPath.call(this);
   var currentPath = window.location.pathname;
   isReversed = previousPath && getCount(previousPath) > getCount(currentPath);
-  isSame = previousPath && getCount(previousPath) === getCount(currentPath);
 }
 
 export default Ember.Mixin.create({
@@ -39,10 +42,6 @@ export default Ember.Mixin.create({
     var animateOutContext = getAnimateOutContext.call(this);
     if (!animateOutContext) return;
     updateIsReversed.call(this);
-    if (isSame) {
-      animateOutContext.done();
-      return;
-    }
 
     var el = this.$();
     var translate = Ember.$(window).width() - el.offset().left;
@@ -62,7 +61,8 @@ export default Ember.Mixin.create({
     el.css('transform', 'translateX(' + (translate * (isReversed ? 1 : -1)) + 'px)');
   },
   animateIn: function(done) {
-    if (!getAnimateOutContext.call(this) || isSame) {
+    // on page refresh, don't animate
+    if (!getAnimateOutContext.call(this)) {
       done();
       return;
     }
