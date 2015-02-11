@@ -33,6 +33,11 @@ export default Ember.Mixin.create({
   willAnimateOut: function() {
   },
   animateOut: function(done) {
+    if (!this.get('animate')) {
+      done();
+      return;
+    }
+
     setAnimateOutContext.call(this, {
       view: this,
       done: done
@@ -80,5 +85,12 @@ export default Ember.Mixin.create({
   },
   didAnimateIn: function() {
     updatePreviousPath.call(this);
+  },
+
+  isAnimated: true,
+  actions: {
+    newView: function(newView) {
+      this.set('animate', newView.isAnimated);
+    }
   }
 });
