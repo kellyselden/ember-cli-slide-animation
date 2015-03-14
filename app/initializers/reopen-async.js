@@ -5,7 +5,10 @@ export function initialize() {
     animationSequence: 'async',
 
     currentViewObserver: function() {
-      this.get('activeView').send('newView', this.get('newView'));
+      var activeView = this.get('activeView');
+      if (activeView) {
+        activeView.send('newView', this.get('newView'));
+      }
     }.observes('newView')
   });
 }
